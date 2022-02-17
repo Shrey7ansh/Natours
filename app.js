@@ -7,7 +7,6 @@ const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
 const cookieParser = require('cookie-parser');
-const bodyParser = require('body-parser');
 const compression = require('compression');
 const cors = require('cors');
 
@@ -16,11 +15,11 @@ const globalErrorHandler = require('./controllers/errorController');
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
-const bookingController = require('./controllers/bookingController');
 const bookingRouter = require('./routes/bookingRoutes');
+const bookingController = require('./controllers/bookingController');
 const viewRouter = require('./routes/viewRoutes');
 
-// Start express application
+// Start express app
 const app = express();
 
 app.enable('trust proxy');
@@ -33,11 +32,9 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(cors());
 // Access-Control-Allow-Origin *
 // api.natours.com, front-end natours.com
-// app.use(
-//   cors({
-//     origin: 'https://www.natours.com'
-//   })
-// );
+// app.use(cors({
+//   origin: 'https://www.natours.com'
+// }))
 
 app.options('*', cors());
 // app.options('/api/v1/tours/:id', cors());
@@ -108,9 +105,10 @@ const limiter = rateLimit({
 });
 app.use('/api', limiter);
 
+// Stripe webhook, BEFORE body-parser, because stripe needs the body as stream
 app.post(
   '/webhook-checkout',
-  bodyParser.raw({ type: 'application/json' }),
+  express.raw({ type: 'application/json' }),
   bookingController.webhookCheckout
 );
 

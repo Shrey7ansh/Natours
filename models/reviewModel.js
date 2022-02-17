@@ -1,12 +1,12 @@
+// review / rating / createdAt / ref to tour / ref to user
 const mongoose = require('mongoose');
-const { findByIdAndDelete } = require('./tourModel');
 const Tour = require('./tourModel');
 
 const reviewSchema = new mongoose.Schema(
   {
     review: {
       type: String,
-      required: [true, 'Review can not be empty.']
+      required: [true, 'Review can not be empty!']
     },
     rating: {
       type: Number,
@@ -25,7 +25,7 @@ const reviewSchema = new mongoose.Schema(
     user: {
       type: mongoose.Schema.ObjectId,
       ref: 'User',
-      required: [true, 'Review must belong to a user.']
+      required: [true, 'Review must belong to a user']
     }
   },
   {
@@ -37,18 +37,18 @@ const reviewSchema = new mongoose.Schema(
 reviewSchema.index({ tour: 1, user: 1 }, { unique: true });
 
 reviewSchema.pre(/^find/, function(next) {
-  //   this.populate({
-  //     path: 'tour',
-  //     select: 'name'
-  //   }).populate({
-  //     path: 'user',
-  //     select: 'name photo'
-  //   });
+  // this.populate({
+  //   path: 'tour',
+  //   select: 'name'
+  // }).populate({
+  //   path: 'user',
+  //   select: 'name photo'
+  // });
+
   this.populate({
     path: 'user',
     select: 'name photo'
   });
-
   next();
 });
 
@@ -65,7 +65,7 @@ reviewSchema.statics.calcAverageRatings = async function(tourId) {
       }
     }
   ]);
-  console.log(stats);
+  // console.log(stats);
 
   if (stats.length > 0) {
     await Tour.findByIdAndUpdate(tourId, {
@@ -89,7 +89,7 @@ reviewSchema.post('save', function() {
 // findByIdAndDelete
 reviewSchema.pre(/^findOneAnd/, async function(next) {
   this.r = await this.findOne();
-  console.log(this.r);
+  // console.log(this.r);
   next();
 });
 

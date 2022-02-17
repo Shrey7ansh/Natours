@@ -5,11 +5,11 @@ const bcrypt = require('bcryptjs');
 
 const userSchema = new mongoose.Schema({
   name: {
-    type: 'String',
-    required: [true, 'Please tell us your name']
+    type: String,
+    required: [true, 'Please tell us your name!']
   },
   email: {
-    type: 'String',
+    type: String,
     required: [true, 'Please provide your email'],
     unique: true,
     lowercase: true,
@@ -20,18 +20,18 @@ const userSchema = new mongoose.Schema({
     default: 'default.jpg'
   },
   role: {
-    type: 'String',
+    type: String,
     enum: ['user', 'guide', 'lead-guide', 'admin'],
     default: 'user'
   },
   password: {
-    type: 'String',
+    type: String,
     required: [true, 'Please provide a password'],
     minlength: 8,
     select: false
   },
   passwordConfirm: {
-    type: 'String',
+    type: String,
     required: [true, 'Please confirm your password'],
     validate: {
       // This only works on CREATE and SAVE!!!
@@ -45,7 +45,7 @@ const userSchema = new mongoose.Schema({
   passwordResetToken: String,
   passwordResetExpires: Date,
   active: {
-    type: 'boolean',
+    type: Boolean,
     default: true,
     select: false
   }
@@ -64,7 +64,7 @@ userSchema.pre('save', async function(next) {
 });
 
 userSchema.pre('save', function(next) {
-  if (!this.isModified('password' || this.isNew)) return next();
+  if (!this.isModified('password') || this.isNew) return next();
 
   this.passwordChangedAt = Date.now() - 1000;
   next();

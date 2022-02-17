@@ -11,6 +11,7 @@ const handleDuplicateFieldsDB = err => {
   const message = `Duplicate field value: ${value}. Please use another value!`;
   return new AppError(message, 400);
 };
+
 const handleValidationErrorDB = err => {
   const errors = Object.values(err.errors).map(el => el.message);
 
@@ -90,7 +91,7 @@ module.exports = (err, req, res, next) => {
   if (process.env.NODE_ENV === 'development') {
     sendErrorDev(err, req, res);
   } else if (process.env.NODE_ENV === 'production') {
-    let error = Object.assign(err);
+    let error = { ...err };
     error.message = err.message;
 
     if (error.name === 'CastError') error = handleCastErrorDB(error);
